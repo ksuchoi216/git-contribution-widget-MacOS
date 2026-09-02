@@ -34,7 +34,7 @@ public struct HeatmapGridView: View {
                         let xOffset = CGFloat(header.weekIndex) * (cellSize + cellSpacing)
                         Text(header.name)
                             .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(Color(hex: "#8b949e"))
                             .offset(x: xOffset, y: 0)
                     }
                 }
@@ -49,19 +49,19 @@ public struct HeatmapGridView: View {
                         .frame(height: cellSize)
                     Text("Mon")
                         .font(.system(size: 9, weight: .medium))
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(Color(hex: "#8b949e"))
                         .frame(height: cellSize)
                     Text("") // Tue
                         .frame(height: cellSize)
                     Text("Wed")
                         .font(.system(size: 9, weight: .medium))
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(Color(hex: "#8b949e"))
                         .frame(height: cellSize)
                     Text("") // Thu
                         .frame(height: cellSize)
                     Text("Fri")
                         .font(.system(size: 9, weight: .medium))
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(Color(hex: "#8b949e"))
                         .frame(height: cellSize)
                     Text("") // Sat
                         .frame(height: cellSize)
@@ -99,19 +99,19 @@ public struct HeatmapGridView: View {
             HStack(alignment: .center) {
                 // Live hover tooltip / help text
                 if let hovered = appState.hoveredDay {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 5) {
                         Circle()
                             .fill(Color(hex: theme.hex(for: hovered.level)))
                             .frame(width: 8, height: 8)
                         Text("\(hovered.count) contribution\(hovered.count == 1 ? "" : "s") on \(hovered.dateString)")
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.primary)
+                            .foregroundColor(Color(hex: "#f0f6fc"))
                     }
                     .transition(.opacity)
                 } else {
                     Text("Learn how we count contributions")
                         .font(.system(size: 10))
-                        .foregroundColor(.secondary.opacity(0.8))
+                        .foregroundColor(Color(hex: "#8b949e"))
                 }
 
                 Spacer()
@@ -120,7 +120,7 @@ public struct HeatmapGridView: View {
                 HStack(spacing: 4) {
                     Text("Less")
                         .font(.system(size: 10))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color(hex: "#8b949e"))
 
                     ForEach(0..<5, id: \.self) { lvl in
                         let level = ContributionLevel.from(raw: lvl)
@@ -129,13 +129,13 @@ public struct HeatmapGridView: View {
                             .frame(width: 10, height: 10)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 2)
-                                    .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                                    .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
                             )
                     }
 
                     Text("More")
                         .font(.system(size: 10))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color(hex: "#8b949e"))
                 }
             }
             .padding(.top, 4)
@@ -144,7 +144,7 @@ public struct HeatmapGridView: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color(hex: "#0d1117").opacity(0.85))
+                .fill(Color(hex: "#0d1117"))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 8)

@@ -20,7 +20,7 @@ public struct PopoverView: View {
                 VStack(alignment: .leading, spacing: 1) {
                     Text(appState.config.username.isEmpty ? "GitHub Widget" : "@\(appState.config.username)")
                         .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                        .foregroundColor(Color(hex: "#f0f6fc"))
 
                     if appState.overview.isCached {
                         Text("Cached • Offline")
@@ -29,7 +29,7 @@ public struct PopoverView: View {
                     } else if !appState.overview.username.isEmpty {
                         Text("Updated \(formattedDate(appState.overview.lastFetched))")
                             .font(.system(size: 9))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color(hex: "#8b949e"))
                     }
                 }
 
@@ -44,7 +44,7 @@ public struct PopoverView: View {
                     }) {
                         Image(systemName: "arrow.up.right.square")
                             .font(.system(size: 13))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color(hex: "#8b949e"))
                     }
                     .buttonStyle(PlainButtonStyle())
                     .help("Open GitHub Profile")
@@ -60,7 +60,7 @@ public struct PopoverView: View {
                         .font(.system(size: 13))
                         .rotationEffect(.degrees(appState.isLoading ? 360 : 0))
                         .animation(appState.isLoading ? Animation.linear(duration: 1).repeatForever(autoreverses: false) : .default, value: appState.isLoading)
-                        .foregroundColor(appState.isLoading ? .accentColor : .secondary)
+                        .foregroundColor(appState.isLoading ? Color(hex: "#58a6ff") : Color(hex: "#8b949e"))
                 }
                 .buttonStyle(PlainButtonStyle())
                 .help("Refresh Contributions")
@@ -74,9 +74,9 @@ public struct PopoverView: View {
                         }
                     }
                 }) {
-                    Image(systemName: appState.isSettingsOpen ? "xmark.circle" : "gearshape")
+                    Image(systemName: appState.isSettingsOpen ? "xmark.circle.fill" : "gearshape")
                         .font(.system(size: 13))
-                        .foregroundColor(appState.isSettingsOpen ? .accentColor : .secondary)
+                        .foregroundColor(appState.isSettingsOpen ? Color(hex: "#58a6ff") : Color(hex: "#8b949e"))
                 }
                 .buttonStyle(PlainButtonStyle())
                 .help("Settings")
@@ -90,11 +90,11 @@ public struct PopoverView: View {
                         .font(.system(size: 11))
                     Text(error)
                         .font(.system(size: 11))
-                        .foregroundColor(.red)
+                        .foregroundColor(Color(hex: "#f85149"))
                     Spacer()
                 }
                 .padding(8)
-                .background(Color.red.opacity(0.12))
+                .background(Color.red.opacity(0.15))
                 .cornerRadius(6)
             }
 
@@ -111,6 +111,7 @@ public struct PopoverView: View {
         .padding(14)
         .frame(width: 740)
         .background(Color(hex: "#0d1117"))
+        .preferredColorScheme(.dark)
         .onAppear {
             inputUsername = appState.config.username
         }
@@ -123,18 +124,34 @@ public struct PopoverView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("GitHub Username")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(hex: "#8b949e"))
 
                 HStack {
                     TextField("e.g. ksuchoi216", text: $inputUsername)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .padding(6)
+                        .background(Color(hex: "#161b22"))
+                        .foregroundColor(Color(hex: "#f0f6fc"))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color(hex: "#30363d"), lineWidth: 1)
+                        )
                         .font(.system(size: 12))
 
-                    Button("Save & Fetch") {
+                    Button(action: {
                         appState.updateUsername(inputUsername)
                         appState.isSettingsOpen = false
+                    }) {
+                        Text("Save & Fetch")
+                            .font(.system(size: 11, weight: .medium))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color(hex: "#238636"))
+                            .foregroundColor(.white)
+                            .cornerRadius(6)
                     }
-                    .font(.system(size: 11, weight: .medium))
+                    .buttonStyle(PlainButtonStyle())
                     .disabled(inputUsername.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
@@ -152,19 +169,21 @@ public struct PopoverView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Widget & System Preferences")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(hex: "#8b949e"))
 
                 Toggle("Floating Desktop HUD Widget", isOn: Binding(
                     get: { appState.config.isDesktopWidgetEnabled },
                     set: { _ in appState.toggleDesktopWidget() }
                 ))
                 .font(.system(size: 12))
+                .foregroundColor(Color(hex: "#f0f6fc"))
 
                 Toggle("Launch Automatically on macOS Login", isOn: Binding(
                     get: { appState.config.isStartAtLoginEnabled },
                     set: { _ in appState.toggleStartAtLogin() }
                 ))
                 .font(.system(size: 12))
+                .foregroundColor(Color(hex: "#f0f6fc"))
             }
 
             Divider()
@@ -177,8 +196,8 @@ public struct PopoverView: View {
                 Button("Quit Widget") {
                     NSApplication.shared.terminate(nil)
                 }
-                .font(.system(size: 11))
-                .foregroundColor(.red)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(Color(hex: "#f85149"))
             }
         }
         .padding(.vertical, 4)

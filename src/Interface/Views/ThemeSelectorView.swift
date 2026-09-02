@@ -11,7 +11,7 @@ public struct ThemeSelectorView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Color Theme")
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.secondary)
+                .foregroundColor(Color(hex: "#8b949e"))
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -29,19 +29,19 @@ public struct ThemeSelectorView: View {
                                 }
                                 Text(theme.name)
                                     .font(.system(size: 9, weight: .medium))
-                                    .foregroundColor(appState.config.themeId == theme.id ? .primary : .secondary)
+                                    .foregroundColor(appState.config.themeId == theme.id ? Color(hex: "#f0f6fc") : Color(hex: "#8b949e"))
                             }
                             .padding(.horizontal, 6)
                             .padding(.vertical, 5)
                             .background(
                                 RoundedRectangle(cornerRadius: 5)
-                                    .fill(appState.config.themeId == theme.id ? Color.white.opacity(0.12) : Color.white.opacity(0.04))
+                                    .fill(appState.config.themeId == theme.id ? Color.white.opacity(0.12) : Color(hex: "#161b22"))
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 5)
                                     .stroke(
-                                        appState.config.themeId == theme.id ? Color.accentColor : Color.white.opacity(0.1),
-                                        lineWidth: appState.config.themeId == theme.id ? 1.5 : 0.5
+                                        appState.config.themeId == theme.id ? Color(hex: "#58a6ff") : Color(hex: "#30363d"),
+                                        lineWidth: appState.config.themeId == theme.id ? 1.5 : 1
                                     )
                             )
                         }

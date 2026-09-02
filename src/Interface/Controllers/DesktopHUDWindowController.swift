@@ -33,6 +33,7 @@ public final class DesktopHUDWindowController: NSObject {
     public func showWindow() {
         if window == nil {
             let hudView = DesktopHUDView(appState: appState)
+                .preferredColorScheme(.dark)
             let hostingController = NSHostingController(rootView: hudView)
 
             let win = NSWindow(
@@ -42,6 +43,7 @@ public final class DesktopHUDWindowController: NSObject {
                 defer: false
             )
 
+            win.appearance = NSAppearance(named: .darkAqua)
             win.isMovableByWindowBackground = true
             win.level = .floating
             win.collectionBehavior = [.canJoinAllSpaces, .stationary]

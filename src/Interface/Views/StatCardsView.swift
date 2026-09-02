@@ -64,23 +64,23 @@ private struct StatCard: View {
     let icon: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(spacing: 4) {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 5) {
                 Image(systemName: icon)
                     .font(.system(size: 10))
                     .foregroundColor(accentColor)
                 Text(title)
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(hex: "#8b949e"))
             }
 
-            HStack(alignment: .lastTextBaseline, spacing: 3) {
+            HStack(alignment: .lastTextBaseline, spacing: 4) {
                 Text(value)
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundColor(.primary)
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .foregroundColor(Color(hex: "#f0f6fc"))
                 Text(unit)
-                    .font(.system(size: 9, weight: .regular))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 10, weight: .regular))
+                    .foregroundColor(Color(hex: "#8b949e"))
             }
         }
         .padding(.horizontal, 10)
@@ -88,11 +88,11 @@ private struct StatCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(Color(hex: "#161b22").opacity(0.8))
+                .fill(Color(hex: "#161b22"))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 6)
-                .stroke(Color(hex: "#30363d").opacity(0.7), lineWidth: 0.8)
+                .stroke(Color(hex: "#30363d"), lineWidth: 1)
         )
     }
 }

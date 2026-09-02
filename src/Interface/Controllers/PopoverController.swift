@@ -20,8 +20,10 @@ public final class PopoverController: NSObject, NSPopoverDelegate {
         popover.behavior = .transient
         popover.animates = true
         popover.delegate = self
+        popover.appearance = NSAppearance(named: .darkAqua)
 
         let contentView = PopoverView(appState: appState)
+            .preferredColorScheme(.dark)
         popover.contentViewController = NSHostingController(rootView: contentView)
     }
 
