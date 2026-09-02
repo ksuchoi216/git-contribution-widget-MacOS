@@ -52,7 +52,7 @@ public struct DesktopHUDView: View {
                 HeatmapGridView(appState: appState)
             }
             .padding(14)
-            .frame(width: 760, height: 178) // Fixed internal coordinate space
+            .frame(width: 760, height: 226) // Fixed internal coordinate space
             .scaleEffect(scale, anchor: .center)
             .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
         }
