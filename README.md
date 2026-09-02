@@ -91,7 +91,7 @@ src/
 │   │   ├── Theme.swift                 # Color palettes & presets
 │   │   └── AppConfig.swift             # Settings entity & display modes
 │   ├── Repositories/
-│   │   ├── ContributionRepositoryProtocol.swift # Data fetching abstraction
+│   │   ├── ContributionRepository\Protocol.swift # Data fetching abstraction
 │   │   └── ConfigRepositoryProtocol.swift       # Persistence abstraction
 │   └── Services/
 │       └── StreakCalculationEngine.swift        # Pure streak & metrics algorithm
