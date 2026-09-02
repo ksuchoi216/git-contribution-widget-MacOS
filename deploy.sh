@@ -20,9 +20,23 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ -z "$VERSION" ]; then
-  echo "Error: Version is required."
-  echo "Usage: sh deploy.sh -v <version>"
-  exit 1
+  PACKAGE_NAME=$(node -p "require('./package.json').name")
+  echo "🔍 No version specified. Fetching latest version from NPM for $PACKAGE_NAME..."
+  
+  # Fetch latest version from NPM
+  LATEST_VERSION=$(npm view "$PACKAGE_NAME" version 2>/dev/null || echo "")
+  
+  if [ -z "$LATEST_VERSION" ]; then
+    echo "⚠️  Package not found on NPM. Falling back to local package.json patch increment."
+    VERSION=$(npm version patch --no-git-tag-version)
+    VERSION=${VERSION#v}
+  else
+    # Increment patch version
+    IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST_VERSION"
+    NEW_PATCH=$((PATCH + 1))
+    VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+    echo "📈 Latest version on NPM is $LATEST_VERSION. Auto-incrementing to $VERSION"
+  fi
 fi
 
 echo "🚀 Preparing deployment for version: $VERSION"
