@@ -8,44 +8,8 @@ public struct DesktopHUDView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            // Header
-            HStack {
-                Image(systemName: "square.grid.3x3.fill")
-                    .foregroundColor(.green)
-                    .font(.system(size: 13))
-
-                Text("github.com/\(appState.config.username)")
-                    .font(.system(size: 13, weight: .bold, design: .monospaced))
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                HStack(spacing: 8) {
-                    HStack(spacing: 3) {
-                        Image(systemName: "flame.fill")
-                            .foregroundColor(.orange)
-                            .font(.system(size: 11))
-                        Text("\(appState.overview.stats.currentStreak)d streak")
-                            .font(.system(size: 11, weight: .semibold))
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.orange.opacity(0.15))
-                    .cornerRadius(4)
-
-                    Button(action: {
-                        appState.toggleDesktopWidget()
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 14))
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
-
-            // Heatmap Grid
+        VStack(alignment: .leading, spacing: 0) {
+            // Heatmap Grid Only
             HeatmapGridView(appState: appState)
         }
         .padding(14)
