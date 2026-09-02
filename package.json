@@ -1,7 +1,7 @@
 {
-  "name": "@ksuchoi216/git-contribution-widget-macos",
+  "name": "git-contribution-widget-macos",
   "version": "1.0.2",
-  "description": "macOS menu bar widget for GitHub contributions",
+  "description": "macOS Menu Bar Widget for GitHub Contributions",
   "publishConfig": {
     "access": "public"
   },

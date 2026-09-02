@@ -35,35 +35,26 @@ A high-performance, lightweight native macOS menu bar and desktop widget designe
 
 ### 1. Install & Launch
 
-You can install and run the widget via **NPM** (Recommended) or via the provided shell script.
+You can install the widget via **NPM** (Recommended) or via the provided shell script.
 
 **Method A: Install via NPM (Recommended)**
 ```bash
-npm install -g @ksuchoi216/git-contribution-widget-macos
-git-contribution-widget --id ksuchoi216
+npm install -g git-contribution-widget-macos
+git-contribution-widget
 ```
 
 **Method B: Install via Bash Script**
 ```bash
-sh install.sh --id ksuchoi216
+sh install.sh
 ```
 
-### 2. Auto-Start on macOS Login (Optional)
-To have the widget automatically start whenever you log in to macOS:
-```bash
-sh install.sh --id ksuchoi216 --login
-```
+### 2. Set your GitHub ID
+- Click the new **GitHub icon** in your macOS menu bar.
+- Open **Settings (⚙️)**.
+- Enter your **GitHub ID** and press Enter.
 
-### 3. Uninstall
-To cleanly remove the application, config, cache, and LaunchAgent:
-```bash
-# If installed via NPM:
-git-contribution-widget --uninstall
-npm uninstall -g @ksuchoi216/git-contribution-widget-macos
-
-# If installed via Bash Script:
-sh install.sh --uninstall
-```
+### 3. Done! 🎉
+Your widget is now active and will refresh automatically in the background.
 
 ---
 
@@ -72,13 +63,12 @@ sh install.sh --uninstall
 ```
 Usage:
   # Via NPM:
-  git-contribution-widget --id <github_id> [OPTIONS]
+  git-contribution-widget [OPTIONS]
   
   # Via Bash Script:
-  sh install.sh --id <github_id> [OPTIONS]
+  sh install.sh [OPTIONS]
 
 Options:
-  --id <username>     Set initial GitHub username (e.g. ksuchoi216)
   --login             Automatically launch on macOS login (registers LaunchAgent)
   --build-only        Compile the .app bundle without installing to ~/Applications
   --uninstall         Remove the widget app, config, cache, and LaunchAgent
