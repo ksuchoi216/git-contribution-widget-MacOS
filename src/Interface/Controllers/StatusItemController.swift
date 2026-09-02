@@ -40,21 +40,27 @@ public final class StatusItemController: NSObject {
         guard let button = statusItem.button else { return }
 
         let stats = appState.overview.stats
-        let mode = appState.config.menuBarDisplayMode
+        let config = appState.config
 
-        var title = ""
-        switch mode {
-        case .iconAndStreak:
+        var parts: [String] = []
+
+        if config.showMenuBarCurrentStreak {
             if stats.currentStreak > 0 {
-                title = "🔥 \(stats.currentStreak)"
+                parts.append("🔥 \(stats.currentStreak)")
             } else {
-                title = "🌱 0"
+                parts.append("🌱 0")
             }
-        case .iconAndToday:
-            title = "⚡ \(stats.todayCount)"
-        case .iconOnly:
-            title = ""
         }
+
+        if config.showMenuBarLongestStreak {
+            parts.append("🏆 \(stats.longestStreak)")
+        }
+
+        if config.showMenuBarToday {
+            parts.append("⚡ \(stats.todayCount)")
+        }
+
+        let title = parts.joined(separator: "  ")
 
         // Set status item image
         if let image = NSImage(systemSymbolName: "circle.grid.cross.fill", accessibilityDescription: "GitHub Contributions") {

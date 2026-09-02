@@ -112,13 +112,33 @@ public final class AppState: ObservableObject {
         }
     }
 
-    public func setMenuBarDisplayMode(_ mode: MenuBarDisplayMode) {
+    public func toggleMenuBarCurrentStreak() {
         do {
             self.config = try updateConfigUseCase.execute { cfg in
-                cfg.menuBarDisplayMode = mode
+                cfg.showMenuBarCurrentStreak.toggle()
             }
         } catch {
-            self.errorMessage = "Failed to update display mode: \(error.localizedDescription)"
+            self.errorMessage = "Failed to update menu bar config: \(error.localizedDescription)"
+        }
+    }
+
+    public func toggleMenuBarLongestStreak() {
+        do {
+            self.config = try updateConfigUseCase.execute { cfg in
+                cfg.showMenuBarLongestStreak.toggle()
+            }
+        } catch {
+            self.errorMessage = "Failed to update menu bar config: \(error.localizedDescription)"
+        }
+    }
+
+    public func toggleMenuBarToday() {
+        do {
+            self.config = try updateConfigUseCase.execute { cfg in
+                cfg.showMenuBarToday.toggle()
+            }
+        } catch {
+            self.errorMessage = "Failed to update menu bar config: \(error.localizedDescription)"
         }
     }
 

@@ -165,6 +165,37 @@ public struct PopoverView: View {
             Divider()
                 .background(Color(hex: "#30363d"))
 
+            // Menu Bar Display Options
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Menu Bar Display")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(Color(hex: "#8b949e"))
+
+                Toggle("🔥 Current Streak", isOn: Binding(
+                    get: { appState.config.showMenuBarCurrentStreak },
+                    set: { _ in appState.toggleMenuBarCurrentStreak() }
+                ))
+                .font(.system(size: 12))
+                .foregroundColor(Color(hex: "#f0f6fc"))
+
+                Toggle("🏆 Longest Streak", isOn: Binding(
+                    get: { appState.config.showMenuBarLongestStreak },
+                    set: { _ in appState.toggleMenuBarLongestStreak() }
+                ))
+                .font(.system(size: 12))
+                .foregroundColor(Color(hex: "#f0f6fc"))
+
+                Toggle("⚡ Today's Commits", isOn: Binding(
+                    get: { appState.config.showMenuBarToday },
+                    set: { _ in appState.toggleMenuBarToday() }
+                ))
+                .font(.system(size: 12))
+                .foregroundColor(Color(hex: "#f0f6fc"))
+            }
+
+            Divider()
+                .background(Color(hex: "#30363d"))
+
             // Widget & Launch Options
             VStack(alignment: .leading, spacing: 8) {
                 Text("Widget & System Preferences")

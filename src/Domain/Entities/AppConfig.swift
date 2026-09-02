@@ -1,26 +1,14 @@
 import Foundation
 
-public enum MenuBarDisplayMode: String, Codable, Sendable, CaseIterable {
-    case iconAndStreak = "icon_streak"
-    case iconAndToday = "icon_today"
-    case iconOnly = "icon_only"
-
-    public var title: String {
-        switch self {
-        case .iconAndStreak: return "Icon + Streak (🔥)"
-        case .iconAndToday: return "Icon + Today (⚡)"
-        case .iconOnly: return "Icon Only"
-        }
-    }
-}
-
 public struct AppConfig: Codable, Equatable, Sendable {
     public var username: String
     public var themeId: String
     public var refreshIntervalMinutes: Int
     public var isDesktopWidgetEnabled: Bool
     public var isStartAtLoginEnabled: Bool
-    public var menuBarDisplayMode: MenuBarDisplayMode
+    public var showMenuBarCurrentStreak: Bool
+    public var showMenuBarLongestStreak: Bool
+    public var showMenuBarToday: Bool
 
     public init(
         username: String = "",
@@ -28,14 +16,31 @@ public struct AppConfig: Codable, Equatable, Sendable {
         refreshIntervalMinutes: Int = 30,
         isDesktopWidgetEnabled: Bool = false,
         isStartAtLoginEnabled: Bool = false,
-        menuBarDisplayMode: MenuBarDisplayMode = .iconAndStreak
+        showMenuBarCurrentStreak: Bool = true,
+        showMenuBarLongestStreak: Bool = false,
+        showMenuBarToday: Bool = false
     ) {
         self.username = username
         self.themeId = themeId
         self.refreshIntervalMinutes = refreshIntervalMinutes
         self.isDesktopWidgetEnabled = isDesktopWidgetEnabled
         self.isStartAtLoginEnabled = isStartAtLoginEnabled
-        self.menuBarDisplayMode = menuBarDisplayMode
+        self.showMenuBarCurrentStreak = showMenuBarCurrentStreak
+        self.showMenuBarLongestStreak = showMenuBarLongestStreak
+        self.showMenuBarToday = showMenuBarToday
+    }
+
+    // Custom decoder to handle backward compatibility
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        username = try container.decodeIfPresent(String.self, forKey: .username) ?? ""
+        themeId = try container.decodeIfPresent(String.self, forKey: .themeId) ?? "dark_green"
+        refreshIntervalMinutes = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalMinutes) ?? 30
+        isDesktopWidgetEnabled = try container.decodeIfPresent(Bool.self, forKey: .isDesktopWidgetEnabled) ?? false
+        isStartAtLoginEnabled = try container.decodeIfPresent(Bool.self, forKey: .isStartAtLoginEnabled) ?? false
+        showMenuBarCurrentStreak = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarCurrentStreak) ?? true
+        showMenuBarLongestStreak = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarLongestStreak) ?? false
+        showMenuBarToday = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarToday) ?? false
     }
 
     public static var `default`: AppConfig {
@@ -45,7 +50,9 @@ public struct AppConfig: Codable, Equatable, Sendable {
             refreshIntervalMinutes: 30,
             isDesktopWidgetEnabled: false,
             isStartAtLoginEnabled: false,
-            menuBarDisplayMode: .iconAndStreak
+            showMenuBarCurrentStreak: true,
+            showMenuBarLongestStreak: false,
+            showMenuBarToday: false
         )
     }
 }
