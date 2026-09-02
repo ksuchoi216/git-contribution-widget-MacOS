@@ -142,9 +142,21 @@ public final class AppState: ObservableObject {
         }
     }
 
+    public func updateRefreshInterval(seconds: Int) {
+        let validSeconds = max(5, seconds)
+        do {
+            self.config = try updateConfigUseCase.execute { cfg in
+                cfg.refreshIntervalSeconds = validSeconds
+            }
+            setupAutoRefresh()
+        } catch {
+            self.errorMessage = "Failed to update refresh interval: \(error.localizedDescription)"
+        }
+    }
+
     private func setupAutoRefresh() {
         refreshTimer?.cancel()
-        let interval = max(5, config.refreshIntervalMinutes) * 60
+        let interval = max(5, config.refreshIntervalSeconds)
         refreshTimer = Timer.publish(every: Double(interval), on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in

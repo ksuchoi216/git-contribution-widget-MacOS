@@ -196,11 +196,33 @@ public struct PopoverView: View {
             Divider()
                 .background(Color(hex: "#30363d"))
 
-            // Widget & Launch Options
+            // Widget & System Preferences
             VStack(alignment: .leading, spacing: 8) {
                 Text("Widget & System Preferences")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(Color(hex: "#8b949e"))
+
+                HStack {
+                    Text("Refresh Interval (seconds):")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color(hex: "#f0f6fc"))
+                    
+                    TextField("60", value: Binding(
+                        get: { appState.config.refreshIntervalSeconds },
+                        set: { appState.updateRefreshInterval(seconds: $0) }
+                    ), formatter: NumberFormatter())
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .padding(4)
+                    .background(Color(hex: "#161b22"))
+                    .foregroundColor(Color(hex: "#f0f6fc"))
+                    .cornerRadius(4)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4)
+                            .stroke(Color(hex: "#30363d"), lineWidth: 1)
+                    )
+                    .frame(width: 50)
+                    .font(.system(size: 12))
+                }
 
                 Toggle("Floating Desktop HUD Widget", isOn: Binding(
                     get: { appState.config.isDesktopWidgetEnabled },

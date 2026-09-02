@@ -3,7 +3,7 @@ import Foundation
 public struct AppConfig: Codable, Equatable, Sendable {
     public var username: String
     public var themeId: String
-    public var refreshIntervalMinutes: Int
+    public var refreshIntervalSeconds: Int
     public var isDesktopWidgetEnabled: Bool
     public var isStartAtLoginEnabled: Bool
     public var showMenuBarCurrentStreak: Bool
@@ -13,7 +13,7 @@ public struct AppConfig: Codable, Equatable, Sendable {
     public init(
         username: String = "",
         themeId: String = "dark_green",
-        refreshIntervalMinutes: Int = 30,
+        refreshIntervalSeconds: Int = 60,
         isDesktopWidgetEnabled: Bool = false,
         isStartAtLoginEnabled: Bool = false,
         showMenuBarCurrentStreak: Bool = true,
@@ -22,7 +22,7 @@ public struct AppConfig: Codable, Equatable, Sendable {
     ) {
         self.username = username
         self.themeId = themeId
-        self.refreshIntervalMinutes = refreshIntervalMinutes
+        self.refreshIntervalSeconds = refreshIntervalSeconds
         self.isDesktopWidgetEnabled = isDesktopWidgetEnabled
         self.isStartAtLoginEnabled = isStartAtLoginEnabled
         self.showMenuBarCurrentStreak = showMenuBarCurrentStreak
@@ -35,7 +35,7 @@ public struct AppConfig: Codable, Equatable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         username = try container.decodeIfPresent(String.self, forKey: .username) ?? ""
         themeId = try container.decodeIfPresent(String.self, forKey: .themeId) ?? "dark_green"
-        refreshIntervalMinutes = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalMinutes) ?? 30
+        refreshIntervalSeconds = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalSeconds) ?? 60
         isDesktopWidgetEnabled = try container.decodeIfPresent(Bool.self, forKey: .isDesktopWidgetEnabled) ?? false
         isStartAtLoginEnabled = try container.decodeIfPresent(Bool.self, forKey: .isStartAtLoginEnabled) ?? false
         showMenuBarCurrentStreak = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarCurrentStreak) ?? true
@@ -47,7 +47,7 @@ public struct AppConfig: Codable, Equatable, Sendable {
         AppConfig(
             username: "",
             themeId: Theme.darkModeGreen.id,
-            refreshIntervalMinutes: 30,
+            refreshIntervalSeconds: 60,
             isDesktopWidgetEnabled: false,
             isStartAtLoginEnabled: false,
             showMenuBarCurrentStreak: true,
