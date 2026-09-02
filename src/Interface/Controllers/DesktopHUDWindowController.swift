@@ -37,11 +37,14 @@ public final class DesktopHUDWindowController: NSObject {
             let hostingController = NSHostingController(rootView: hudView)
 
             let win = NSWindow(
-                contentRect: NSRect(x: 100, y: 100, width: 760, height: 200),
-                styleMask: [.borderless, .fullSizeContentView],
+                contentRect: NSRect(x: 100, y: 100, width: 760, height: 178),
+                styleMask: [.borderless, .fullSizeContentView, .resizable],
                 backing: .buffered,
                 defer: false
             )
+
+            win.aspectRatio = NSSize(width: 760, height: 178)
+            win.minSize = NSSize(width: 380, height: 89)
 
             win.appearance = NSAppearance(named: .darkAqua)
             win.isMovableByWindowBackground = true
