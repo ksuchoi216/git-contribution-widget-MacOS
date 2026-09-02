@@ -45,21 +45,23 @@ public final class StatusItemController: NSObject {
         var parts: [String] = []
 
         if !config.username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            if config.showMenuBarCurrentStreak {
-                if stats.currentStreak > 0 {
-                    parts.append("🔥 \(stats.currentStreak)")
-                } else {
-                    parts.append("🌱 0")
-                }
-            }
+        let showEmojis = config.showMenuBarEmojis
 
-            if config.showMenuBarLongestStreak {
-                parts.append("🏆 \(stats.longestStreak)")
+        if config.showMenuBarCurrentStreak {
+            if stats.currentStreak > 0 {
+                parts.append(showEmojis ? "🔥 \(stats.currentStreak)" : "\(stats.currentStreak)")
+            } else {
+                parts.append(showEmojis ? "🌱 0" : "0")
             }
+        }
 
-            if config.showMenuBarToday {
-                parts.append("⚡ \(stats.todayCount)")
-            }
+        if config.showMenuBarLongestStreak {
+            parts.append(showEmojis ? "🏆 \(stats.longestStreak)" : "\(stats.longestStreak)")
+        }
+
+        if config.showMenuBarToday {
+            parts.append(showEmojis ? "⚡ \(stats.todayCount)" : "\(stats.todayCount)")
+        }
         }
 
         let title = parts.joined(separator: "  ")

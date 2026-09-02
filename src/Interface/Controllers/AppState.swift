@@ -142,6 +142,16 @@ public final class AppState: ObservableObject {
         }
     }
 
+    public func toggleMenuBarEmojis() {
+        do {
+            self.config = try updateConfigUseCase.execute { cfg in
+                cfg.showMenuBarEmojis.toggle()
+            }
+        } catch {
+            self.errorMessage = "Failed to update menu bar config: \(error.localizedDescription)"
+        }
+    }
+
     public func updateRefreshIntervalMinutes(_ minutes: Int) {
         let validMinutes = max(5, minutes)
         do {

@@ -9,6 +9,7 @@ public struct AppConfig: Codable, Equatable, Sendable {
     public var showMenuBarCurrentStreak: Bool
     public var showMenuBarLongestStreak: Bool
     public var showMenuBarToday: Bool
+    public var showMenuBarEmojis: Bool
 
     public init(
         username: String = "",
@@ -16,9 +17,10 @@ public struct AppConfig: Codable, Equatable, Sendable {
         refreshIntervalMinutes: Int = 30,
         isDesktopWidgetEnabled: Bool = false,
         isStartAtLoginEnabled: Bool = false,
-        showMenuBarCurrentStreak: Bool = true,
+        showMenuBarCurrentStreak: Bool = false,
         showMenuBarLongestStreak: Bool = false,
-        showMenuBarToday: Bool = false
+        showMenuBarToday: Bool = true,
+        showMenuBarEmojis: Bool = true
     ) {
         self.username = username
         self.themeId = themeId
@@ -28,6 +30,7 @@ public struct AppConfig: Codable, Equatable, Sendable {
         self.showMenuBarCurrentStreak = showMenuBarCurrentStreak
         self.showMenuBarLongestStreak = showMenuBarLongestStreak
         self.showMenuBarToday = showMenuBarToday
+        self.showMenuBarEmojis = showMenuBarEmojis
     }
 
     // Custom decoder to handle backward compatibility
@@ -38,9 +41,10 @@ public struct AppConfig: Codable, Equatable, Sendable {
         refreshIntervalMinutes = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalMinutes) ?? 30
         isDesktopWidgetEnabled = try container.decodeIfPresent(Bool.self, forKey: .isDesktopWidgetEnabled) ?? false
         isStartAtLoginEnabled = try container.decodeIfPresent(Bool.self, forKey: .isStartAtLoginEnabled) ?? false
-        showMenuBarCurrentStreak = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarCurrentStreak) ?? true
+        showMenuBarCurrentStreak = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarCurrentStreak) ?? false
         showMenuBarLongestStreak = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarLongestStreak) ?? false
-        showMenuBarToday = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarToday) ?? false
+        showMenuBarToday = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarToday) ?? true
+        showMenuBarEmojis = try container.decodeIfPresent(Bool.self, forKey: .showMenuBarEmojis) ?? true
     }
 
     public static var `default`: AppConfig {
@@ -50,9 +54,10 @@ public struct AppConfig: Codable, Equatable, Sendable {
             refreshIntervalMinutes: 30,
             isDesktopWidgetEnabled: false,
             isStartAtLoginEnabled: false,
-            showMenuBarCurrentStreak: true,
+            showMenuBarCurrentStreak: false,
             showMenuBarLongestStreak: false,
-            showMenuBarToday: false
+            showMenuBarToday: true,
+            showMenuBarEmojis: true
         )
     }
 }

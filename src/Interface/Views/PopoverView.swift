@@ -191,6 +191,13 @@ public struct PopoverView: View {
                 ))
                 .font(.system(size: 12))
                 .foregroundColor(Color(hex: "#f0f6fc"))
+                
+                Toggle("😎 Show Emojis", isOn: Binding(
+                    get: { appState.config.showMenuBarEmojis },
+                    set: { _ in appState.toggleMenuBarEmojis() }
+                ))
+                .font(.system(size: 12))
+                .foregroundColor(Color(hex: "#f0f6fc"))
             }
 
             Divider()
