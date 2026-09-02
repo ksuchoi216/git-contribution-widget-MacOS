@@ -44,20 +44,22 @@ public final class StatusItemController: NSObject {
 
         var parts: [String] = []
 
-        if config.showMenuBarCurrentStreak {
-            if stats.currentStreak > 0 {
-                parts.append("🔥 \(stats.currentStreak)")
-            } else {
-                parts.append("🌱 0")
+        if !config.username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            if config.showMenuBarCurrentStreak {
+                if stats.currentStreak > 0 {
+                    parts.append("🔥 \(stats.currentStreak)")
+                } else {
+                    parts.append("🌱 0")
+                }
             }
-        }
 
-        if config.showMenuBarLongestStreak {
-            parts.append("🏆 \(stats.longestStreak)")
-        }
+            if config.showMenuBarLongestStreak {
+                parts.append("🏆 \(stats.longestStreak)")
+            }
 
-        if config.showMenuBarToday {
-            parts.append("⚡ \(stats.todayCount)")
+            if config.showMenuBarToday {
+                parts.append("⚡ \(stats.todayCount)")
+            }
         }
 
         let title = parts.joined(separator: "  ")

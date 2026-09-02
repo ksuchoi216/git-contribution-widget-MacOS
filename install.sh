@@ -2,7 +2,7 @@
 # ==============================================================================
 # GitHub Contribution Widget for macOS - Installer
 # Usage:
-#   sh install.sh --id <github_id> [--login] [--build-only] [--uninstall]
+#   sh install.sh [--login] [--build-only] [--uninstall]
 # ==============================================================================
 
 set -e
@@ -41,16 +41,15 @@ print_error() {
 show_help() {
     printf "GitHub Contribution Widget for macOS\n\n"
     printf "Usage:\n"
-    printf "  sh install.sh --id <github_id> [OPTIONS]\n\n"
+    printf "  sh install.sh [OPTIONS]\n\n"
     printf "Options:\n"
-    printf "  --id <username>     Set initial GitHub username (e.g. ksuchoi216)\n"
     printf "  --login             Automatically launch on macOS login\n"
     printf "  --build-only        Only compile the .app bundle without installing\n"
     printf "  --uninstall         Uninstall the widget, LaunchAgent, and config\n"
     printf "  --help, -h          Show this help message\n\n"
     printf "Example:\n"
-    printf "  sh install.sh --id ksuchoi216\n"
-    printf "  sh install.sh --id ksuchoi216 --login\n"
+    printf "  sh install.sh\n"
+    printf "  sh install.sh --login\n"
     exit 0
 }
 
@@ -61,10 +60,7 @@ UNINSTALL=false
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        --id|-id)
-            GITHUB_ID="$2"
-            shift 2
-            ;;
+
         --login)
             START_AT_LOGIN=true
             shift
@@ -113,12 +109,7 @@ if [ "$UNINSTALL" = true ]; then
     exit 0
 fi
 
-# Validation
-if [ -z "$GITHUB_ID" ] && [ "$BUILD_ONLY" = false ]; then
-    print_error "Missing required argument: --id <github_id>"
-    printf "Example: sh install.sh --id ksuchoi216\n"
-    exit 1
-fi
+
 
 # Step 1: Check Swift Compiler
 print_info "Checking Swift compiler toolchain..."
@@ -204,20 +195,24 @@ cp -R "$TEMP_APP" "$APP_DEST"
 print_success "App bundle installed at: $APP_DEST"
 
 # Step 6: Configure Initial Settings
-print_info "Initializing configuration for GitHub user: $GITHUB_ID..."
+print_info "Initializing configuration..."
 mkdir -p "$CONFIG_DIR"
 
+# Only create config if it doesn't exist to preserve existing settings
+if [ ! -f "$CONFIG_DIR/config.json" ]; then
 cat <<EOF > "$CONFIG_DIR/config.json"
 {
   "isDesktopWidgetEnabled" : false,
   "isStartAtLoginEnabled" : ${START_AT_LOGIN},
-  "menuBarDisplayMode" : "icon_streak",
   "refreshIntervalMinutes" : 30,
   "themeId" : "dark_green",
-  "username" : "${GITHUB_ID}"
+  "username" : ""
 }
 EOF
-print_success "Configuration saved to: $CONFIG_DIR/config.json"
+print_success "Default configuration saved to: $CONFIG_DIR/config.json"
+else
+print_success "Existing configuration kept at: $CONFIG_DIR/config.json"
+fi
 
 # Step 7: Configure LaunchAgent if enabled
 if [ "$START_AT_LOGIN" = true ]; then
@@ -257,6 +252,5 @@ printf "\n"
 printf "${GREEN}======================================================${NC}\n"
 printf "${GREEN}  🎉 GitHub Contribution Widget Installed Successfully! ${NC}\n"
 printf "${GREEN}======================================================${NC}\n"
-printf "User:       ${BLUE}%s${NC}\n" "${GITHUB_ID}"
 printf "Location:   %s\n" "${APP_DEST}"
-printf "Status Bar: Look for the GitHub icon & streak in your macOS menu bar!\n\n"
+printf "Status Bar: Click the GitHub icon in your menu bar and open Settings (⚙️) to enter your GitHub ID!\n\n"
