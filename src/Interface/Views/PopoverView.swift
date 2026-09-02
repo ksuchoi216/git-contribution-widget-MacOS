@@ -203,13 +203,13 @@ public struct PopoverView: View {
                     .foregroundColor(Color(hex: "#8b949e"))
 
                 HStack {
-                    Text("Refresh Interval (seconds):")
+                    Text("Refresh Interval (minutes):")
                         .font(.system(size: 12))
                         .foregroundColor(Color(hex: "#f0f6fc"))
                     
-                    TextField("60", value: Binding(
-                        get: { appState.config.refreshIntervalSeconds },
-                        set: { appState.updateRefreshInterval(seconds: $0) }
+                    TextField("30", value: Binding(
+                        get: { appState.config.refreshIntervalMinutes },
+                        set: { appState.updateRefreshIntervalMinutes($0) }
                     ), formatter: NumberFormatter())
                     .textFieldStyle(PlainTextFieldStyle())
                     .padding(4)

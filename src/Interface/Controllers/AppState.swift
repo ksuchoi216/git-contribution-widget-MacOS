@@ -142,11 +142,11 @@ public final class AppState: ObservableObject {
         }
     }
 
-    public func updateRefreshInterval(seconds: Int) {
-        let validSeconds = max(5, seconds)
+    public func updateRefreshIntervalMinutes(_ minutes: Int) {
+        let validMinutes = max(5, minutes)
         do {
             self.config = try updateConfigUseCase.execute { cfg in
-                cfg.refreshIntervalSeconds = validSeconds
+                cfg.refreshIntervalMinutes = validMinutes
             }
             setupAutoRefresh()
         } catch {
@@ -156,7 +156,7 @@ public final class AppState: ObservableObject {
 
     private func setupAutoRefresh() {
         refreshTimer?.cancel()
-        let interval = max(5, config.refreshIntervalSeconds)
+        let interval = max(5, config.refreshIntervalMinutes) * 60
         refreshTimer = Timer.publish(every: Double(interval), on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
