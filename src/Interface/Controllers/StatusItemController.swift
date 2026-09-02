@@ -84,6 +84,11 @@ public final class StatusItemController: NSObject {
         } else {
             // Left-click toggle popover
             popoverController.togglePopover(sender: sender)
+            
+            // Refresh data when clicked
+            Task {
+                await appState.fetchContributions(force: true)
+            }
         }
     }
 
