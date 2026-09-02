@@ -10,6 +10,11 @@ public final class AppState: ObservableObject {
     @Published public var errorMessage: String? = nil
     @Published public var hoveredDay: ContributionDay? = nil
     @Published public var isSettingsOpen: Bool = false
+    @Published public var popoverOpenTrigger: Int = 0
+
+    public func notifyPopoverOpened() {
+        popoverOpenTrigger += 1
+    }
 
     public let getContributionsUseCase: GetContributionsUseCase
     public let updateConfigUseCase: UpdateConfigUseCase

@@ -36,6 +36,7 @@ public final class PopoverController: NSObject, NSPopoverDelegate {
     }
 
     public func showPopover(sender: NSStatusBarButton) {
+        appState.notifyPopoverOpened()
         popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
         startMonitoringClicks()
