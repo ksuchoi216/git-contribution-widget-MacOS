@@ -1,14 +1,6 @@
 import AppKit
 import SwiftUI
 
-class PopoverHostingController<Content: View>: NSHostingController<Content> {
-    override func viewDidLayout() {
-        super.viewDidLayout()
-        let fittingSize = self.sizeThatFits(in: NSSize(width: 740, height: 1000))
-        self.preferredContentSize = NSSize(width: 740, height: fittingSize.height)
-    }
-}
-
 @MainActor
 public final class PopoverController: NSObject, NSPopoverDelegate {
     private let popover: NSPopover
@@ -31,9 +23,8 @@ public final class PopoverController: NSObject, NSPopoverDelegate {
 
         let contentView = PopoverView(appState: appState)
             .preferredColorScheme(.dark)
-            .fixedSize(horizontal: false, vertical: true)
         
-        popover.contentViewController = PopoverHostingController(rootView: contentView)
+        popover.contentViewController = NSHostingController(rootView: contentView)
     }
 
     public func togglePopover(sender: NSStatusBarButton) {

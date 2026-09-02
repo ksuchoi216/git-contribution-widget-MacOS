@@ -98,15 +98,21 @@ public struct PopoverView: View {
                 .cornerRadius(6)
             }
 
-            if appState.isSettingsOpen {
-                // MARK: - Settings View
-                settingsSection
-            } else {
-                // MARK: - Main Stats & Heatmap
-                StatCardsView(appState: appState)
+            // MARK: - Dynamic Content Area
+            VStack(alignment: .leading, spacing: 12) {
+                if appState.isSettingsOpen {
+                    // MARK: - Settings View
+                    ScrollView(.vertical, showsIndicators: false) {
+                        settingsSection
+                    }
+                } else {
+                    // MARK: - Main Stats & Heatmap
+                    StatCardsView(appState: appState)
 
-                HeatmapGridView(appState: appState)
+                    HeatmapGridView(appState: appState)
+                }
             }
+            .frame(height: 236, alignment: .top) // Lock height to prevent popover clipping
         }
         .padding(14)
         .frame(width: 740)
