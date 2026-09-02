@@ -21,30 +21,12 @@ public struct HeatmapGridView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // 1. Month Labels Header
-            HStack(spacing: 0) {
-                // Left offset for weekday labels
-                Text("")
-                    .font(.system(size: 10))
-                    .frame(width: 32)
-
-                // Month headers
-                ZStack(alignment: .leading) {
-                    ForEach(calendar.monthHeaders) { header in
-                        let xOffset = CGFloat(header.weekIndex) * (cellSize + cellSpacing)
-                        Text(header.name)
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(Color(hex: "#8b949e"))
-                            .offset(x: xOffset, y: 0)
-                    }
-                }
-                .frame(height: 14, alignment: .leading)
-            }
-
-            // 2. Heatmap Grid + Weekday Labels
+            // Heatmap Grid + Weekday Labels + Month Headers (Unified ScrollView)
             HStack(alignment: .top, spacing: 6) {
                 // Weekday Labels (Mon, Wed, Fri)
                 VStack(alignment: .trailing, spacing: cellSpacing) {
+                    Color.clear.frame(height: 20) // Offset for month header height (14) + spacing (6)
+
                     Text("") // Sun
                         .frame(height: cellSize)
                     Text("Mon")
@@ -68,29 +50,60 @@ public struct HeatmapGridView: View {
                 }
                 .frame(width: 26, alignment: .trailing)
 
-                // 52-Week Columns
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: cellSpacing) {
-                        ForEach(Array(calendar.weeks.enumerated()), id: \.offset) { weekIdx, week in
-                            VStack(spacing: cellSpacing) {
-                                ForEach(week) { day in
-                                    DaySquareView(
-                                        day: day,
-                                        theme: theme,
-                                        isHovered: appState.hoveredDay?.id == day.id,
-                                        cellSize: cellSize,
-                                        cornerRadius: cornerRadius
-                                    )
-                                    .onHover { isHovered in
-                                        if isHovered {
-                                            appState.hoveredDay = day
-                                        } else if appState.hoveredDay?.id == day.id {
-                                            appState.hoveredDay = nil
+                // Scrollable Month Headers & 52-Week Columns
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            // Month Headers
+                            ZStack(alignment: .leading) {
+                                ForEach(calendar.monthHeaders) { header in
+                                    let xOffset = CGFloat(header.weekIndex) * (cellSize + cellSpacing)
+                                    Text(header.name)
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundColor(Color(hex: "#8b949e"))
+                                        .offset(x: xOffset, y: 0)
+                                }
+                            }
+                            .frame(height: 14, alignment: .leading)
+
+                            // 52-Week Columns
+                            HStack(spacing: cellSpacing) {
+                                ForEach(Array(calendar.weeks.enumerated()), id: \.offset) { weekIdx, week in
+                                    VStack(spacing: cellSpacing) {
+                                        ForEach(week) { day in
+                                            DaySquareView(
+                                                day: day,
+                                                theme: theme,
+                                                isHovered: appState.hoveredDay?.id == day.id,
+                                                cellSize: cellSize,
+                                                cornerRadius: cornerRadius
+                                            )
+                                            .onHover { isHovered in
+                                                if isHovered {
+                                                    appState.hoveredDay = day
+                                                } else if appState.hoveredDay?.id == day.id {
+                                                    appState.hoveredDay = nil
+                                                }
+                                            }
                                         }
                                     }
                                 }
+
+                                // Trailing anchor for auto-scroll
+                                Color.clear
+                                    .frame(width: 1, height: 1)
+                                    .id("heatmap_trailing_edge")
                             }
                         }
+                    }
+                    .onAppear {
+                        scrollToLatest(proxy: proxy)
+                    }
+                    .onChange(of: appState.popoverOpenTrigger) { _ in
+                        scrollToLatest(proxy: proxy)
+                    }
+                    .onChange(of: appState.overview.lastFetched) { _ in
+                        scrollToLatest(proxy: proxy)
                     }
                 }
             }
@@ -150,6 +163,15 @@ public struct HeatmapGridView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color(hex: "#30363d"), lineWidth: 1)
         )
+    }
+
+    private func scrollToLatest(proxy: ScrollViewProxy) {
+        DispatchQueue.main.async {
+            proxy.scrollTo("heatmap_trailing_edge", anchor: .trailing)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            proxy.scrollTo("heatmap_trailing_edge", anchor: .trailing)
+        }
     }
 }
 
