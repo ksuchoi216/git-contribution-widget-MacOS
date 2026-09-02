@@ -13,10 +13,11 @@ public final class GitHubContributionRepository: ContributionRepositoryProtocol,
             throw NetworkError.decodingError("Username is empty")
         }
 
-        // 1. Primary: Direct HTML Scraping from GitHub
+        let timestamp = Int(Date().timeIntervalSince1970)
+        // 1. Primary: Direct HTML Scraping from GitHub with cache-busting query parameter
         do {
-            let htmlUrl = "https://github.com/users/\(trimmedUsername)/contributions"
-            let html = try await httpClient.fetchString(from: htmlUrl)
+            let htmlUrl = "https://github.com/users/\(trimmedUsername)/contributions?_=\(timestamp)"
+            let html = try await httpClient.fetchString(from: htmlUrl, cachePolicy: .reloadIgnoringLocalCacheData)
             let calendar = try parseGitHubHTML(html: html, username: trimmedUsername)
             if !calendar.days.isEmpty {
                 return calendar
@@ -27,8 +28,8 @@ public final class GitHubContributionRepository: ContributionRepositoryProtocol,
 
         // 2. Secondary: Fallback to Public JSON API
         do {
-            let jsonUrl = "https://github-contributions-api.jogruber.de/v4/\(trimmedUsername)"
-            let data = try await httpClient.fetchData(from: jsonUrl)
+            let jsonUrl = "https://github-contributions-api.jogruber.de/v4/\(trimmedUsername)?_=\(timestamp)"
+            let data = try await httpClient.fetchData(from: jsonUrl, cachePolicy: .reloadIgnoringLocalCacheData)
             return try parseFallbackJSON(data: data, username: trimmedUsername)
         } catch {
             throw NetworkError.serverError("Unable to fetch contributions for '\(trimmedUsername)'. Please check network connection and username.")

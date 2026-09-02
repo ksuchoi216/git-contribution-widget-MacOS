@@ -27,17 +27,16 @@ public final class HTTPClient: @unchecked Sendable {
         self.session = session
     }
 
-    public func fetchString(from urlString: String) async throws -> String {
+    public func fetchString(from urlString: String, cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData) async throws -> String {
         guard let url = URL(string: urlString) else {
             throw NetworkError.invalidURL
         }
 
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: 15.0)
         request.httpMethod = "GET"
         request.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36", forHTTPHeaderField: "User-Agent")
         request.setValue("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")
         request.setValue("en-US,en;q=0.9", forHTTPHeaderField: "Accept-Language")
-        request.timeoutInterval = 15.0
 
         let (data, response) = try await session.data(for: request)
 
@@ -56,15 +55,14 @@ public final class HTTPClient: @unchecked Sendable {
         return text
     }
 
-    public func fetchData(from urlString: String) async throws -> Data {
+    public func fetchData(from urlString: String, cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData) async throws -> Data {
         guard let url = URL(string: urlString) else {
             throw NetworkError.invalidURL
         }
 
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: 15.0)
         request.httpMethod = "GET"
         request.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", forHTTPHeaderField: "User-Agent")
-        request.timeoutInterval = 15.0
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
