@@ -16,6 +16,7 @@ A high-performance, lightweight native macOS menu bar and desktop widget designe
   - Current active daily streak (🔥).
   - Longest historical daily streak (🏆).
   - Today's commit count (⚡).
+- 🎛 **Customizable Menu Bar Display**: Toggle to show any combination of Current Streak, Longest Streak, or Today's Commits directly in your macOS menu bar.
 - 🎨 **7 Built-in Color Themes**:
   - GitHub Dark Green (default)
   - GitHub Light Green
@@ -25,7 +26,7 @@ A high-performance, lightweight native macOS menu bar and desktop widget designe
   - Ocean Blue
   - Monochrome Slate
 - 🖥 **Floating Desktop HUD Mode**: Sleek translucent glassmorphism widget (`.ultraThinMaterial`) pinned to your desktop wallpaper.
-- 🔄 **Smart Caching & Background Refresh**: Offline disk cache + background timer (auto-refreshes every 30 minutes) + instant manual refresh button.
+- 🔄 **Smart Caching & Background Refresh**: Offline disk cache + background timer (configurable refresh interval via settings, defaults to 30 mins) + instant manual refresh button.
 - 🚀 **One-Line Installation**: Install and start instantly with `sh install.sh --id <github_id>`.
 
 ---
@@ -33,7 +34,16 @@ A high-performance, lightweight native macOS menu bar and desktop widget designe
 ## 🚀 Quick Start & Installation
 
 ### 1. Install & Launch
-Run the installer with your GitHub username:
+
+You can install and run the widget via **NPM** (Recommended) or via the provided shell script.
+
+**Method A: Install via NPM (Recommended)**
+```bash
+npm install -g @ksuchoi216/git-contribution-widget-macos
+git-contribution-widget --id ksuchoi216
+```
+
+**Method B: Install via Bash Script**
 ```bash
 sh install.sh --id ksuchoi216
 ```
@@ -47,6 +57,11 @@ sh install.sh --id ksuchoi216 --login
 ### 3. Uninstall
 To cleanly remove the application, config, cache, and LaunchAgent:
 ```bash
+# If installed via NPM:
+git-contribution-widget --uninstall
+npm uninstall -g @ksuchoi216/git-contribution-widget-macos
+
+# If installed via Bash Script:
 sh install.sh --uninstall
 ```
 
@@ -56,6 +71,10 @@ sh install.sh --uninstall
 
 ```
 Usage:
+  # Via NPM:
+  git-contribution-widget --id <github_id> [OPTIONS]
+  
+  # Via Bash Script:
   sh install.sh --id <github_id> [OPTIONS]
 
 Options:
