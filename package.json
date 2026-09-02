@@ -1,0 +1,33 @@
+{
+  "name": "@ksuchoi216/git-contribution-widget-macos",
+  "version": "1.0.0",
+  "description": "macOS menu bar widget for GitHub contributions",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "git-contribution-widget": "./bin/git-contribution-widget"
+  },
+  "scripts": {
+    "postinstall": "echo \"\" && echo \"🎉 Git Contribution Widget CLI installed!\" && echo \"To install the widget, run: git-contribution-widget --id <your_github_id>\" && echo \"\" && echo \"If you wish to uninstall later, run: npm uninstall -g @ksuchoi216/git-contribution-widget-macos\" && echo \"\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ksuchoi216/git-contribution-widget-MacOS.git"
+  },
+  "keywords": [
+    "github",
+    "contribution",
+    "widget",
+    "macos",
+    "swift",
+    "streak"
+  ],
+  "author": "ksuchoi216",
+  "files": [
+    "bin/",
+    "src/",
+    "install.sh"
+  ],
+  "license": "MIT"
+}
