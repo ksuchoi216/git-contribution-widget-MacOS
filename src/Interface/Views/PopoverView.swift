@@ -3,6 +3,7 @@ import SwiftUI
 public struct PopoverView: View {
     @ObservedObject var appState: AppState
     @State private var inputUsername: String = ""
+    @State private var isHeaderHovered: Bool = false
 
     public init(appState: AppState) {
         self.appState = appState
@@ -12,26 +13,55 @@ public struct PopoverView: View {
         VStack(alignment: .leading, spacing: 12) {
             // MARK: - Header
             HStack(spacing: 10) {
-                // GitHub Logo / Octocat
-                Image(systemName: "circle.grid.cross.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(Color(hex: appState.overview.theme.hex(for: .level3)))
+                // Clickable GitHub Profile Header
+                Button(action: {
+                    if !appState.config.username.isEmpty,
+                       let url = URL(string: "https://github.com/\(appState.config.username)?tab=overview") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }) {
+                    HStack(spacing: 10) {
+                        // GitHub Logo / Octocat
+                        Image(systemName: "circle.grid.cross.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(Color(hex: appState.overview.theme.hex(for: .level3)))
 
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(appState.config.username.isEmpty ? "GitHub Widget" : "@\(appState.config.username)")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundColor(Color(hex: "#f0f6fc"))
+                        VStack(alignment: .leading, spacing: 1) {
+                            HStack(spacing: 4) {
+                                Text(appState.config.username.isEmpty ? "GitHub Widget" : "@\(appState.config.username)")
+                                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                                    .foregroundColor(isHeaderHovered && !appState.config.username.isEmpty ? Color(hex: "#58a6ff") : Color(hex: "#f0f6fc"))
 
-                    if appState.overview.isCached {
-                        Text("Cached • Offline")
-                            .font(.system(size: 9))
-                            .foregroundColor(.orange)
-                    } else if !appState.overview.username.isEmpty {
-                        Text("Updated \(formattedDate(appState.overview.lastFetched))")
-                            .font(.system(size: 9))
-                            .foregroundColor(Color(hex: "#8b949e"))
+                                if !appState.config.username.isEmpty {
+                                    Image(systemName: "arrow.up.right")
+                                        .font(.system(size: 10, weight: .semibold))
+                                        .foregroundColor(isHeaderHovered ? Color(hex: "#58a6ff") : Color(hex: "#8b949e"))
+                                }
+                            }
+
+                            if appState.overview.isCached {
+                                Text("Cached • Offline")
+                                    .font(.system(size: 9))
+                                    .foregroundColor(.orange)
+                            } else if !appState.overview.username.isEmpty {
+                                Text("Updated \(formattedDate(appState.overview.lastFetched))")
+                                    .font(.system(size: 9))
+                                    .foregroundColor(Color(hex: "#8b949e"))
+                            }
+                        }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(PlainButtonStyle())
+                .onHover { hovering in
+                    isHeaderHovered = hovering
+                    if hovering && !appState.config.username.isEmpty {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
                     }
                 }
+                .help(appState.config.username.isEmpty ? "" : "Open https://github.com/\(appState.config.username)?tab=overview")
 
                 Spacer()
 
