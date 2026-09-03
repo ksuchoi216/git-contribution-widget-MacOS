@@ -1,6 +1,6 @@
 {
   "name": "git-contribution-widget-macos",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "macOS Menu Bar Widget for GitHub Contributions",
   "publishConfig": {
     "access": "public"
