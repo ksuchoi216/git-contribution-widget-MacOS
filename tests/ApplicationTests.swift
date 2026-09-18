@@ -5,7 +5,7 @@ final class MockContributionRepository: ContributionRepositoryProtocol, @uncheck
     var shouldFail: Bool = false
     var mockCalendar: ContributionCalendar?
 
-    func fetchContributions(username: String) async throws -> ContributionCalendar {
+    func fetchContributions(username: String, calendar: Calendar) async throws -> ContributionCalendar {
         if shouldFail {
             throw NetworkError.serverError("Simulated network failure")
         }
@@ -76,6 +76,33 @@ struct ApplicationTestRunner {
             assert(result.stats.totalContributions == 5, "Cached total should match")
         } catch {
             fatalError("Fallback to cache should have succeeded: \(error)")
+        }
+
+        // The same data uses the configured date boundary, including cached reads.
+        mockContribRepo.shouldFail = false
+        for offset in [-12, 0, 9, 14] {
+            mockConfigRepo.config.utcOffsetHours = offset
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withFullDate]
+            formatter.timeZone = TimeZone(secondsFromGMT: offset * 3600)
+            mockContribRepo.mockCalendar = ContributionCalendar(
+                username: "ksuchoi216",
+                days: [ContributionDay(
+                    dateString: formatter.string(from: Date()), date: Date(),
+                    count: 7, level: .level1, weekday: 1
+                )],
+                weeks: [], monthHeaders: [], totalContributions: 7
+            )
+            do {
+                let fresh = try await getUseCase.execute()
+                assert(fresh.stats.todayCount == 7)
+                mockContribRepo.shouldFail = true
+                let cached = try await getUseCase.execute()
+                assert(cached.isCached && cached.stats.todayCount == 7)
+                mockContribRepo.shouldFail = false
+            } catch {
+                fatalError("Configured UTC offset should work: \(error)")
+            }
         }
 
         // 3. Test UpdateConfigUseCase

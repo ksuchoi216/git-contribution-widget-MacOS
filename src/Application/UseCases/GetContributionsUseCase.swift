@@ -26,8 +26,8 @@ public final class GetContributionsUseCase: Sendable {
 
         // 1. Try fresh network fetch
         do {
-            let calendar = try await contributionRepository.fetchContributions(username: targetUser)
-            let stats = streakEngine.calculateStats(from: calendar.days)
+            let calendar = try await contributionRepository.fetchContributions(username: targetUser, calendar: config.contributionCalendar)
+            let stats = streakEngine.calculateStats(from: calendar.days, calendar: config.contributionCalendar)
 
             // Cache successful result
             try? configRepository.saveCache(calendar)
@@ -43,7 +43,7 @@ public final class GetContributionsUseCase: Sendable {
         } catch {
             // 2. Fallback to cached data if network fails
             if let cached = configRepository.loadCache(), cached.username.lowercased() == targetUser.lowercased() {
-                let stats = streakEngine.calculateStats(from: cached.days)
+                let stats = streakEngine.calculateStats(from: cached.days, calendar: config.contributionCalendar)
                 return ContributionOverviewDTO(
                     username: targetUser,
                     calendar: cached,

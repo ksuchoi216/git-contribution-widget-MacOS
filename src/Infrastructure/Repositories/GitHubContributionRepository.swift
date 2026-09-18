@@ -7,19 +7,27 @@ public final class GitHubContributionRepository: ContributionRepositoryProtocol,
         self.httpClient = httpClient
     }
 
-    public func fetchContributions(username: String) async throws -> ContributionCalendar {
+    public func fetchContributions(username: String, calendar referenceCalendar: Calendar) async throws -> ContributionCalendar {
         let trimmedUsername = username.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedUsername.isEmpty else {
             throw NetworkError.decodingError("Username is empty")
         }
 
         let timestamp = Int(Date().timeIntervalSince1970)
+        let localDateFormatter = ISO8601DateFormatter()
+        localDateFormatter.formatOptions = [.withFullDate]
+        localDateFormatter.timeZone = referenceCalendar.timeZone
+        let todayStr = localDateFormatter.string(from: Date())
+
         // 1. Primary: Direct HTML Scraping from GitHub with cache-busting query parameter
         do {
             let htmlUrl = "https://github.com/users/\(trimmedUsername)/contributions?_=\(timestamp)"
             let html = try await httpClient.fetchString(from: htmlUrl, cachePolicy: .reloadIgnoringLocalCacheData)
-            let calendar = try parseGitHubHTML(html: html, username: trimmedUsername)
+            var calendar = try parseGitHubHTML(html: html, username: trimmedUsername)
             if !calendar.days.isEmpty {
+                if let lastDayStr = calendar.days.last?.dateString, lastDayStr < todayStr {
+                    calendar = await enrichWithRecentDays(calendar: calendar, username: trimmedUsername, todayStr: todayStr)
+                }
                 return calendar
             }
         } catch {
@@ -28,15 +36,68 @@ public final class GitHubContributionRepository: ContributionRepositoryProtocol,
 
         // 2. Secondary: Fallback to Public JSON API
         do {
-            let jsonUrl = "https://github-contributions-api.jogruber.de/v4/\(trimmedUsername)?_=\(timestamp)"
+            let jsonUrl = "https://github-contributions-api.jogruber.de/v4/\(trimmedUsername)?y=last&_=\(timestamp)"
             let data = try await httpClient.fetchData(from: jsonUrl, cachePolicy: .reloadIgnoringLocalCacheData)
-            return try parseFallbackJSON(data: data, username: trimmedUsername)
+            var calendar = try parseFallbackJSON(data: data, username: trimmedUsername)
+            if let lastDayStr = calendar.days.last?.dateString, lastDayStr < todayStr {
+                calendar = await enrichWithRecentDays(calendar: calendar, username: trimmedUsername, todayStr: todayStr)
+            }
+            return calendar
         } catch {
             throw NetworkError.serverError("Unable to fetch contributions for '\(trimmedUsername)'. Please check network connection and username.")
         }
     }
 
     // MARK: - HTML Parsing Logic
+
+    private func enrichWithRecentDays(
+        calendar: ContributionCalendar,
+        username: String,
+        todayStr: String
+    ) async -> ContributionCalendar {
+        guard let lastDate = calendar.days.last?.dateString else { return calendar }
+
+        // GitHub's default range can end yesterday while the local date is already today.
+        let timestamp = Int(Date().timeIntervalSince1970)
+        let url = "https://github.com/users/\(username)/contributions"
+            + "?from=\(lastDate)&to=\(todayStr)&_=\(timestamp)"
+
+        do {
+            let html = try await httpClient.fetchString(from: url)
+            let recentCalendar = try parseGitHubHTML(html: html, username: username)
+            // Explicit date requests can return a whole year, including future cells.
+            let missingDays = recentCalendar.days.filter {
+                $0.dateString > lastDate && $0.dateString <= todayStr
+            }
+            guard !missingDays.isEmpty else { return calendar }
+
+            let days = calendar.days + missingDays
+            var weeks: [[ContributionDay]] = []
+            var currentWeek: [ContributionDay] = []
+            for day in days {
+                currentWeek.append(day)
+                if day.weekday == 7 {
+                    weeks.append(currentWeek)
+                    currentWeek = []
+                }
+            }
+            if !currentWeek.isEmpty {
+                weeks.append(currentWeek)
+            }
+
+            return ContributionCalendar(
+                username: username,
+                days: days,
+                weeks: weeks,
+                monthHeaders: generateDefaultMonthHeaders(for: days),
+                totalContributions: calendar.totalContributions + missingDays.reduce(0) { $0 + $1.count },
+                updatedAt: calendar.updatedAt
+            )
+        } catch {
+            // Keep the successful main response if the supplemental request fails.
+            return calendar
+        }
+    }
 
     private func parseGitHubHTML(html: String, username: String) throws -> ContributionCalendar {
         let dateFormatter = ISO8601DateFormatter()

@@ -195,6 +195,17 @@ public struct PopoverView: View {
             Divider()
                 .background(Color(hex: "#30363d"))
 
+            Picker("UTC Offset", selection: Binding(
+                get: { appState.config.utcOffsetHours },
+                set: { appState.updateUTCOffsetHours($0) }
+            )) {
+                ForEach(-12...14, id: \.self) { offset in
+                    Text("UTC\(offset >= 0 ? "+" : "")\(offset)").tag(offset)
+                }
+            }
+            .font(.system(size: 12))
+            .help("Time offset used for today's contributions and streaks. Default: UTC+9.")
+
             // Theme Picker
             ThemeSelectorView(appState: appState)
 

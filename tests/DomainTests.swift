@@ -43,6 +43,29 @@ struct DomainTestRunner {
         assert(stats.longestStreak == 5, "Expected longestStreak to be 5 (days -9..-5), got \(stats.longestStreak)")
         assert(stats.totalContributions == (5*2 + 0 + 3*3 + 4), "Expected total to match, got \(stats.totalContributions)")
 
+        let legacyConfig = try! JSONDecoder().decode(AppConfig.self, from: Data("{}".utf8))
+        assert(legacyConfig.utcOffsetHours == 9)
+        var utcConfig = legacyConfig
+        utcConfig.utcOffsetHours = 0
+        let restored = try! JSONDecoder().decode(AppConfig.self, from: JSONEncoder().encode(utcConfig))
+        assert(restored.utcOffsetHours == 0)
+
+        let boundary = ISO8601DateFormatter().date(from: "2026-09-18T21:30:00Z")!
+        let boundaryDays = [
+            ContributionDay(dateString: "2026-09-18", date: boundary, count: 8, level: .level1, weekday: 6),
+            ContributionDay(dateString: "2026-09-19", date: boundary, count: 3, level: .level1, weekday: 7)
+        ]
+        let koreanStats = engine.calculateStats(
+            from: boundaryDays, referenceDate: boundary, calendar: legacyConfig.contributionCalendar
+        )
+        let utcStats = engine.calculateStats(
+            from: boundaryDays, referenceDate: boundary, calendar: utcConfig.contributionCalendar
+        )
+        assert(koreanStats.todayCount == 3)
+        assert(utcStats.todayCount == 8)
+        assert(koreanStats.currentStreak == 2)
+        assert(utcStats.currentStreak == 1)
+
         // Test Theme Presets
         assert(Theme.allPresets.count == 7, "Expected 7 theme presets")
         let dark = Theme.find(id: "dark_green")

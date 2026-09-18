@@ -157,6 +157,20 @@ public final class AppState: ObservableObject {
         }
     }
 
+    public func updateUTCOffsetHours(_ hours: Int) {
+        guard hours != config.utcOffsetHours else { return }
+        do {
+            config = try updateConfigUseCase.execute { config in
+                config.utcOffsetHours = min(14, max(-12, hours))
+            }
+            Task {
+                await fetchContributions(force: true)
+            }
+        } catch {
+            errorMessage = "Failed to update UTC offset: \(error.localizedDescription)"
+        }
+    }
+
     public func updateRefreshIntervalMinutes(_ minutes: Int) {
         let validMinutes = max(5, minutes)
         do {
